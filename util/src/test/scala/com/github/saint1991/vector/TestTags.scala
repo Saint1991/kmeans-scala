@@ -1,4 +1,4 @@
-package com.github.saint
+package com.github.saint1991.vector
 
 import org.scalatest.Tag
 

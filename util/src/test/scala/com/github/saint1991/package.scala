@@ -2,7 +2,7 @@ package com.github
 
 import org.scalactic.{Equality, TolerantNumerics}
 
-package object saint {
+package object saint1991 {
   final val DefaultPrecision = 1.0E-7
   implicit val doubleEq: Equality[Double] = TolerantNumerics.tolerantDoubleEquality(DefaultPrecision)
   implicit val doubleSeqEq: Equality[Seq[Double]] = new Equality[Seq[Double]] {
