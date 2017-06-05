@@ -21,8 +21,8 @@ trait KMeans[T] extends Initialization[T] {
     val clusters: Map[ClusterIndex, Seq[VectorRepr[T]]] = groupByAssignments(vectors, assignments)
 
     @tailrec
-    def iteration(acc: Map[ClusterIndex, Seq[VectorRepr[T]]], currentIteration: Int): Map[ClusterIndex, Seq[VectorRepr[T]]] = {
-      val means: Map[ClusterIndex, Seq[Double]] = acc.par.map(x => x._1 -> space.mean(x._2.map(_.vector):_*)).seq
+    def iteration(currentCluster: Map[ClusterIndex, Seq[VectorRepr[T]]], currentObjective: Double, currentIteration: Int): Map[ClusterIndex, Seq[VectorRepr[T]]] = {
+      val means: Map[ClusterIndex, Seq[Double]] = currentCluster.par.map(x => x._1 -> space.mean(x._2.map(_.vector):_*)).seq
       val nextAssignments = vectors.par.map(vector => means.minBy(clusterMean => vector distanceFrom clusterMean._2)._1).seq
       val nextClusters = groupByAssignments(vectors, nextAssignments)
 
@@ -30,10 +30,11 @@ trait KMeans[T] extends Initialization[T] {
         cluster.map(x => Math.sqrt(x distanceFrom means(idx))).sum
       }.sum
 
-      if (currentIteration + 1 > maxIteration || objective <= conversionThreshold) nextClusters
-      else iteration(nextClusters, currentIteration + 1)
+      if (currentIteration + 1 > maxIteration ||
+         (currentIteration >= 2 && Math.abs(objective - currentObjective) <= conversionThreshold)) nextClusters
+      else iteration(nextClusters, objective, currentIteration + 1)
     }
 
-    ClusteringResult(iteration(clusters, 0).values.toSeq)
+    ClusteringResult(iteration(clusters, 0.0, 0).values.toSeq)
   }
 }

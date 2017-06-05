@@ -13,7 +13,7 @@ $argmin_C \sum^X min_j |x_i - c_j|^2$
 1. initial state: assign each element to a cluster
 2. calculate mean of each cluster
 3. reassign each element to the nearest cluster
-4. repeat procedure 2, 3 until the value of objective function become less than $d$
+4. repeat procedure 2, 3 until the change of objective function become less than $d$
 
 
 ### Usage
